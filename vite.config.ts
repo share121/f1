@@ -1,10 +1,8 @@
 import { defineConfig } from "vite";
 import viteCompression from "vite-plugin-compression";
+import html from "@tomjs/vite-plugin-html";
 
 export default defineConfig({
   base: "/f1/",
-  build: {
-    outDir: "docs",
-  },
-  plugins: [viteCompression({ threshold: 0 })],
+  plugins: [html({ minify: true }), viteCompression({ threshold: 0 })],
 });
