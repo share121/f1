@@ -1,0 +1,410 @@
+@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+
+@font-face {
+  font-family: "F1";
+  src: url("/Formula1-Bold.otf");
+  font-weight: bold;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    visibility: visible;
+  }
+}
+
+@keyframes fade-out {
+  100% {
+    opacity: 0;
+  }
+}
+
+html {
+  --common-delay: 4s;
+  --person-delay: 3.5s;
+  --progress: 0s;
+
+  body {
+    display: flex;
+    height: 100vh;
+    margin: 0;
+
+    .left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      flex: 1;
+      background: #000;
+
+      .stage-container {
+        display: flex;
+        justify-content: center;
+        overflow: auto;
+        flex: 1;
+      }
+
+      .video-controls {
+        display: flex;
+        padding: 8px 16px;
+        gap: 8px;
+        align-items: center;
+
+        .range {
+          flex: 1;
+        }
+      }
+    }
+
+    #stage,
+    #clone {
+      position: relative;
+      margin: auto;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      color: #fff;
+      background: #0f0c13;
+      --width: 1920px;
+      --font-ratio: calc(16 / 1920 * var(--width));
+
+      .big-text {
+        font-size: calc(6 * var(--font-ratio));
+      }
+
+      .canvas {
+        position: absolute;
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(100%) brightness(0.3);
+      }
+
+      .video-shade {
+        position: absolute;
+        inset: 0;
+        background: #52440f8e;
+      }
+
+      .main {
+        position: absolute;
+        inset: 0;
+        --n: 0;
+        --self-delay: 0s;
+        --delay: calc(
+          var(--self-delay) + var(--person-delay) * var(--n) +
+            var(--common-delay) + var(--progress)
+        );
+
+        animation: fade-out 0.5s ease calc(var(--person-delay) + var(--delay))
+          paused forwards;
+
+        .text-shade {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(100deg, #00000000 40%, #0f0c13 65%);
+          visibility: hidden;
+          animation: fade-in 1s ease calc(0.5s + var(--delay)) paused forwards;
+        }
+
+        .background-point {
+          position: absolute;
+          inset: 0;
+          background: url("/background-point.svg");
+          background-size: 1%;
+          visibility: hidden;
+          opacity: 0.5;
+          animation: fade-in 1s ease calc(0.5s + var(--delay)) paused forwards;
+        }
+
+        @keyframes red-triangle {
+          0% {
+            transform: translate(-50%, -50%);
+          }
+
+          100% {
+            visibility: visible;
+          }
+        }
+
+        .red-triangle {
+          position: absolute;
+          inset: 0;
+          filter: drop-shadow(0 0 var(--font-ratio) #000);
+          visibility: hidden;
+          animation: red-triangle 1s ease calc(1s + var(--delay)) paused
+            forwards;
+        }
+
+        .red-triangle::after {
+          content: "";
+          display: block;
+          width: 40%;
+          height: calc(2 / 3 * 100%);
+          clip-path: polygon(0 0, 0 100%, 100% 0);
+          background-color: rgb(225, 6, 0);
+        }
+
+        @keyframes person {
+          0% {
+            opacity: 0;
+            transform: scale(2) translateX(calc(var(--font-ratio) * -40));
+          }
+
+          100% {
+            visibility: visible;
+          }
+        }
+
+        .person {
+          position: absolute;
+          top: 0;
+          left: 30%;
+          height: 100%;
+          transform: translateX(-50%);
+          filter: drop-shadow(0 0 var(--font-ratio) #000);
+          visibility: hidden;
+          animation: person 1s ease calc(0.5s + var(--delay)) paused forwards;
+        }
+
+        @keyframes content-in {
+          0% {
+            opacity: 0;
+            transform: scale(1.2)
+              translate(
+                calc(var(--font-ratio) * -15),
+                calc(var(--font-ratio) * -5)
+              );
+          }
+
+          50%,
+          100% {
+            visibility: visible;
+          }
+        }
+
+        .content {
+          position: absolute;
+          display: flex;
+          top: 0;
+          right: 0;
+          width: 40%;
+          height: 100%;
+          flex-direction: column;
+          justify-content: center;
+          gap: calc(var(--font-ratio) * 4);
+          font: bold calc(var(--font-ratio) * 3) / 1 F1;
+          text-align: center;
+          visibility: hidden;
+          animation: content-in 1s ease calc(0.5s + var(--delay)) paused
+            forwards;
+
+          .national-flag {
+            width: calc(var(--font-ratio) * 6);
+          }
+
+          .hr {
+            margin: var(--font-ratio) 0;
+            width: 100%;
+            height: calc(var(--font-ratio) * 0.5);
+            background: linear-gradient(
+              90deg,
+              transparent 5%,
+              rgb(225, 6, 0),
+              transparent 95%
+            );
+          }
+
+          .sponsor-1 {
+            width: calc(var(--font-ratio) * 4);
+          }
+
+          .score {
+            color: #1f1d19;
+            -webkit-text-stroke: calc(var(--font-ratio) * 0.1) #e8e98c;
+          }
+
+          .bottom {
+            display: flex;
+            flex-direction: column;
+            gap: var(--font-ratio);
+
+            @keyframes sponsor-container {
+              0% {
+                transform: scaleY(0);
+              }
+
+              100% {
+                visibility: visible;
+              }
+            }
+
+            .sponsor-container {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              gap: calc(var(--font-ratio) * 2);
+              visibility: hidden;
+              animation: sponsor-container 1s ease calc(1.2s + var(--delay))
+                paused forwards;
+
+              @keyframes sponsor-2 {
+                0% {
+                  clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+                  transform: translateX(calc(100% + var(--font-ratio) * 2));
+                }
+
+                100% {
+                  visibility: visible;
+                  clip-path: polygon(
+                    0 0,
+                    calc(100% + var(--font-ratio) * 2) 0,
+                    calc(100% + var(--font-ratio) * 2) 100%,
+                    0 100%
+                  );
+                }
+              }
+
+              .sponsor-2 {
+                width: calc(var(--font-ratio) * 12);
+                visibility: hidden;
+                animation: sponsor-2 1s ease calc(2s + var(--delay)) paused
+                  forwards;
+              }
+
+              .vertical-dividing-line {
+                width: calc(var(--font-ratio) * 0.2);
+                height: 100%;
+                background-color: #7b7983;
+              }
+
+              @keyframes sponsor-3 {
+                0% {
+                  transform: translateX(calc(-100% - var(--font-ratio) * 2));
+                  clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+                }
+
+                100% {
+                  visibility: visible;
+                  clip-path: polygon(
+                    calc(var(--font-ratio) * -2) 0,
+                    100% 0,
+                    100% 100%,
+                    calc(var(--font-ratio) * -2) 100%
+                  );
+                }
+              }
+
+              .sponsor-3 {
+                width: calc(var(--font-ratio) * 12);
+                visibility: hidden;
+                animation: sponsor-3 1s ease calc(2s + var(--delay)) paused
+                  forwards;
+              }
+            }
+
+            .ads {
+              font-size: calc(var(--font-ratio) * 2);
+              color: #b4b1b9;
+              visibility: hidden;
+              animation: fade-in 500ms ease calc(2.5s + var(--delay)) paused
+                forwards;
+            }
+          }
+        }
+
+        .vignetting {
+          position: absolute;
+          inset: 0;
+          box-shadow: inset 0 0 calc(var(--font-ratio) * 8) 0 rgba(0, 0, 0, 0.8);
+          visibility: hidden;
+          pointer-events: none;
+          animation: fade-in 1s ease calc(0.5s + var(--delay)) paused forwards;
+        }
+
+        .rect-1,
+        .rect-2 {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: calc(var(--font-ratio) * 5);
+          height: calc(var(--font-ratio) * 200);
+          background-color: #e3b400;
+          visibility: hidden;
+        }
+
+        @keyframes rect-1 {
+          0% {
+            transform: rotate(45deg)
+              translate(
+                calc(var(--font-ratio) * -80),
+                calc(var(--font-ratio) * -96)
+              )
+              scaleX(3);
+          }
+
+          100% {
+            visibility: visible;
+            transform: rotate(45deg)
+              translate(
+                calc(var(--font-ratio) * 17),
+                calc(var(--font-ratio) * -96)
+              )
+              scaleX(0);
+          }
+        }
+
+        .rect-1 {
+          animation: rect-1 0.75s ease var(--delay) paused forwards;
+        }
+
+        @keyframes rect-2 {
+          0% {
+            transform: rotate(45deg)
+              translate(
+                calc(var(--font-ratio) * 17),
+                calc(var(--font-ratio) * -96)
+              )
+              scaleX(0);
+          }
+
+          50% {
+            visibility: visible;
+            transform: rotate(45deg)
+              translate(
+                calc(var(--font-ratio) * 39),
+                calc(var(--font-ratio) * -96)
+              )
+              scaleX(2);
+          }
+
+          100% {
+            transform: rotate(45deg)
+              translate(
+                calc(61 * var(--font-ratio)),
+                calc(var(--font-ratio) * -96)
+              )
+              scaleX(0);
+          }
+        }
+
+        .rect-2 {
+          animation: rect-2 0.75s linear calc(0.25s + var(--delay)) paused
+            forwards;
+        }
+      }
+    }
+
+    .controls {
+      padding: 16px;
+      overflow: auto;
+    }
+
+    #video {
+      display: none;
+    }
+  }
+}
