@@ -142,9 +142,17 @@ totalTimeEl.addEventListener("input", () => {
   videoTotalTimeEl.textContent = formatTime(value * 1e3);
   updateCmd();
 });
-speedRateEl.addEventListener("input", () => {
+speedRateEl.addEventListener("input", (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  let value = parseFloat(target.value);
+  if (value < 0.1) {
+    value = 0.1;
+  } else if (value > 16) {
+    value = 16;
+  }
+  target.value = value.toString();
   const isPlaying = pause();
-  audioEl.playbackRate = videoEl.playbackRate = +speedRateEl.value;
+  audioEl.playbackRate = videoEl.playbackRate = value;
   if (isPlaying) play();
 });
 let isPlaying = false;
