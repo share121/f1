@@ -243,14 +243,16 @@ exportEl.addEventListener("click", async () => {
     const framesHandle = await handle.getDirectoryHandle("frames", {
       create: true,
     });
-    handle
-      .getFileHandle("audio." + window.音频扩展名, { create: true })
-      .then((h) => h.createWritable())
-      .then(async (w) => (await fetch(audioEl.src)).body?.pipeTo(w));
-    handle
-      .getFileHandle("ffmpeg.exe", { create: true })
-      .then((h) => h.createWritable())
-      .then(async (w) => (await fetch(ffmpegUrl)).body?.pipeTo(w));
+    const promises = [
+      handle
+        .getFileHandle("audio." + window.音频扩展名, { create: true })
+        .then((h) => h.createWritable())
+        .then(async (w) => (await fetch(audioEl.src)).body?.pipeTo(w)),
+      handle
+        .getFileHandle("ffmpeg.exe", { create: true })
+        .then((h) => h.createWritable())
+        .then(async (w) => (await fetch(ffmpegUrl)).body?.pipeTo(w)),
+    ];
     await delay(1e3);
     for (let i = startPos; i <= frameCount; i++) {
       const value = delta * i;
@@ -265,20 +267,23 @@ exportEl.addEventListener("click", async () => {
         { create: true }
       );
       const data = await domToBlob(context);
-      (async () => {
-        const w = await (await hNewFile).createWritable();
-        await w.write(data);
-        await w.close();
-      })();
+      promises.push(
+        (async () => {
+          const w = await (await hNewFile).createWritable();
+          await w.write(data);
+          await w.close();
+        })()
+      );
       curFrameEl.textContent = i + "";
     }
+    await Promise.all(promises);
+    exportEl.textContent = "导出完成";
   } catch (e) {
-    alert("访问文件夹失败");
+    exportEl.textContent = "导出失败";
     throw e;
   } finally {
     if (context) destroyContext(context);
     div.remove();
-    exportEl.textContent = "导出";
   }
 });
 importEl.addEventListener("click", async () => {
@@ -345,8 +350,9 @@ importEl.addEventListener("click", async () => {
     // @ts-ignore
     window.配置 = config.filter(() => true);
     init();
+    importEl.textContent = "导入成功";
   } catch (e) {
-    alert("访问文件夹失败");
+    importEl.textContent = "导入失败";
     throw e;
   }
 });
