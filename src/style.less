@@ -94,6 +94,7 @@ html {
         inset: 0;
         --n: 0;
         --self-delay: 0s;
+        --person-size: 1;
         --delay: calc(
           var(--self-delay) + var(--person-delay) * var(--n) +
             var(--common-delay) + var(--progress)
@@ -151,7 +152,8 @@ html {
         @keyframes person {
           0% {
             opacity: 0;
-            transform: scale(2) translateX(calc(var(--font-ratio) * -40));
+            transform: scale(2) translateX(calc(var(--font-ratio) * -40))
+              scale(var(--person-size));
           }
 
           100% {
@@ -164,7 +166,7 @@ html {
           top: 0;
           left: 30%;
           height: 100%;
-          transform: translateX(-50%);
+          transform: translateX(-50%) scale(var(--person-size));
           filter: drop-shadow(0 0 var(--font-ratio) #000);
           visibility: hidden;
           animation: person 1s ease calc(0.5s + var(--delay)) paused forwards;

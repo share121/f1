@@ -108,6 +108,8 @@ function init() {
       e.style.setProperty("--n", i + "");
       if (item.动画延迟)
         e.style.setProperty("--self-delay", item.动画延迟 + "s");
+      if (item.人物大小)
+        e.style.setProperty("--person-size", item.人物大小 + "");
       if (item.人物图片)
         e.querySelector<HTMLImageElement>(".person")!.src = item.人物图片;
       if (item.国旗图片)
@@ -271,7 +273,9 @@ exportEl.addEventListener("click", async () => {
     });
     const promises = [
       handle
-        .getFileHandle("audio." + window.音频扩展名 ?? "flac", { create: true })
+        .getFileHandle("audio." + (window.音频扩展名 ?? "flac"), {
+          create: true,
+        })
         .then((h) => h.createWritable())
         .then(async (w) => (await fetch(audioEl.src)).body?.pipeTo(w)),
       handle
