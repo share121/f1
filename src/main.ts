@@ -49,7 +49,9 @@ function updateCmd() {
   const frameCount = Math.ceil((totalTime * fps) / 1e3);
   const padlen = frameCount.toString().length;
   totalFrameEl.textContent = frameCount + "";
-  cmdEl.value = `.\\ffmpeg -r ${fps} -i .\\frames\\%${padlen}d.png -i audio.${window.音频扩展名} -c:v libx264 -shortest -af apad -crf 0 -pix_fmt yuv420p output.mp4 -y`;
+  cmdEl.value = `.\\ffmpeg -r ${fps} -i .\\frames\\%${padlen}d.png -i audio.${
+    window.音频扩展名 ?? "flac"
+  } -c:v libx264 -shortest -af apad -crf 0 -pix_fmt yuv420p output.mp4 -y`;
 }
 
 function formatTime(ms: number) {
@@ -63,55 +65,74 @@ function drawVideo(ctx: CanvasRenderingContext2D) {
 }
 
 function init() {
-  videoEl.src = window.视频路径;
-  audioEl.src = window.音频路径;
-  totalTimeEl.value = window.视频时长 + "";
-  videoAspectRatioEl.value = window.视频纵横比;
-  videoTotalTimeEl.textContent = formatTime(window.视频时长 * 1e3);
-  fpsEl.value = window.视频帧率 + "";
-  videoWidthEl.value = window.视频宽度 + "";
-  rangeEl.max = window.视频时长 * 1e3 + "";
-  stageEl.style.aspectRatio = window.视频纵横比;
-  delayTimeEl.value = window.动画延迟 + "";
-  document.documentElement.style.setProperty(
-    "--common-delay",
-    window.动画延迟 + "s"
-  );
-  personDelayEl.value = window.人物间延迟 + "";
-  document.documentElement.style.setProperty(
-    "--person-delay",
-    window.人物间延迟 + "s"
-  );
-  [...document.querySelectorAll(".main")]
-    .filter((_, i) => i >= window.配置.length)
-    .forEach((e) => e.remove());
-  for (
-    let i = window.配置.length - document.querySelectorAll(".main").length;
-    i;
-    i--
-  ) {
-    stageEl.appendChild(mainEl.cloneNode(true));
+  if (window.视频路径) videoEl.src = window.视频路径;
+  if (window.音频路径) audioEl.src = window.音频路径;
+  if (window.视频时长) {
+    totalTimeEl.value = window.视频时长 + "";
+    videoTotalTimeEl.textContent = formatTime(window.视频时长 * 1e3);
+    rangeEl.max = window.视频时长 * 1e3 + "";
   }
-  document.querySelectorAll<HTMLDivElement>(".main").forEach((e, i) => {
-    e.style.setProperty("--n", i + "");
-    e.style.setProperty("--self-delay", window.配置[i].动画延迟 + "s");
-    e.querySelector<HTMLImageElement>(".person")!.src = window.配置[i].人物图片;
-    e.querySelector<HTMLImageElement>(".national-flag")!.src =
-      window.配置[i].国旗图片;
-    e.querySelector<HTMLDivElement>(".prize")!.innerText = window.配置[i].奖项;
-    e.querySelector<HTMLSpanElement>(".name-normal")!.innerText =
-      window.配置[i].名字.普通版文字;
-    e.querySelector<HTMLSpanElement>(".name-big")!.innerText =
-      window.配置[i].名字.放大版文字;
-    e.querySelector<HTMLImageElement>(".sponsor-1")!.src =
-      window.配置[i].赞助商1;
-    e.querySelector<HTMLDivElement>(".score")!.innerText = window.配置[i].分数;
-    e.querySelector<HTMLImageElement>(".sponsor-2")!.src =
-      window.配置[i].赞助商2;
-    e.querySelector<HTMLImageElement>(".sponsor-3")!.src =
-      window.配置[i].赞助商3;
-    e.querySelector<HTMLDivElement>(".ads")!.innerText = window.配置[i].广告;
-  });
+  if (window.视频纵横比) {
+    videoAspectRatioEl.value = window.视频纵横比;
+    stageEl.style.aspectRatio = window.视频纵横比;
+  }
+  if (window.视频帧率) fpsEl.value = window.视频帧率 + "";
+  if (window.视频宽度) videoWidthEl.value = window.视频宽度 + "";
+  if (window.动画延迟) {
+    delayTimeEl.value = window.动画延迟 + "";
+    document.documentElement.style.setProperty(
+      "--common-delay",
+      window.动画延迟 + "s"
+    );
+  }
+  if (window.人物间延迟) {
+    personDelayEl.value = window.人物间延迟 + "";
+    document.documentElement.style.setProperty(
+      "--person-delay",
+      window.人物间延迟 + "s"
+    );
+  }
+  if (window.配置) {
+    [...document.querySelectorAll(".main")]
+      .filter((_, i) => i >= window.配置!.length)
+      .forEach((e) => e.remove());
+    for (
+      let i = window.配置.length - document.querySelectorAll(".main").length;
+      i;
+      i--
+    ) {
+      stageEl.appendChild(mainEl.cloneNode(true));
+    }
+    document.querySelectorAll<HTMLDivElement>(".main").forEach((e, i) => {
+      const item = window.配置![i];
+      e.style.setProperty("--n", i + "");
+      if (item.动画延迟)
+        e.style.setProperty("--self-delay", item.动画延迟 + "s");
+      if (item.人物图片)
+        e.querySelector<HTMLImageElement>(".person")!.src = item.人物图片;
+      if (item.国旗图片)
+        e.querySelector<HTMLImageElement>(".national-flag")!.src =
+          item.国旗图片;
+      if (item.奖项)
+        e.querySelector<HTMLDivElement>(".prize")!.innerText = item.奖项;
+      if (item.名字?.普通版文字)
+        e.querySelector<HTMLSpanElement>(".name-normal")!.innerText =
+          item.名字.普通版文字;
+      if (item.名字?.放大版文字)
+        e.querySelector<HTMLSpanElement>(".name-big")!.innerText =
+          item.名字.放大版文字;
+      if (item.赞助商1)
+        e.querySelector<HTMLImageElement>(".sponsor-1")!.src = item.赞助商1;
+      if (item.分数)
+        e.querySelector<HTMLDivElement>(".score")!.innerText = item.分数;
+      if (item.赞助商2)
+        e.querySelector<HTMLImageElement>(".sponsor-2")!.src = item.赞助商2;
+      if (item.赞助商3)
+        e.querySelector<HTMLImageElement>(".sponsor-3")!.src = item.赞助商3;
+      if (item.广告)
+        e.querySelector<HTMLDivElement>(".ads")!.innerText = item.广告;
+    });
+  }
   updateCmd();
 }
 
@@ -250,7 +271,7 @@ exportEl.addEventListener("click", async () => {
     });
     const promises = [
       handle
-        .getFileHandle("audio." + window.音频扩展名, { create: true })
+        .getFileHandle("audio." + window.音频扩展名 ?? "flac", { create: true })
         .then((h) => h.createWritable())
         .then(async (w) => (await fetch(audioEl.src)).body?.pipeTo(w)),
       handle
