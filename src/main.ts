@@ -232,7 +232,10 @@ exportEl.addEventListener("click", async () => {
   exportEl.textContent = "导出中…";
   let context: Context<HTMLDivElement> | undefined;
   try {
-    const handle = await showDirectoryPicker({ mode: "readwrite" });
+    const handle = await showDirectoryPicker({
+      id: "export",
+      mode: "readwrite",
+    });
     context = await createContext(stageCloneEl, {
       workerUrl,
       workerNumber: 80,
@@ -288,7 +291,9 @@ exportEl.addEventListener("click", async () => {
 });
 importEl.addEventListener("click", async () => {
   try {
-    const dirHandle = await showDirectoryPicker();
+    const dirHandle = await showDirectoryPicker({
+      id: "import",
+    });
     const config: {
       [k: string]: string;
     }[] = [];
