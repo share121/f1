@@ -11,6 +11,14 @@ import {
   domToBlob,
 } from "modern-screenshot";
 
+// @ts-ignore
+LA.init({
+  id: "3J6dEY8wQU3ZxACy",
+  ck: "3J6dEY8wQU3ZxACy",
+  autoTrack: true,
+  prefix: "f1/event",
+});
+
 const stageEl = document.querySelector<HTMLDivElement>("#stage")!;
 const rangeEl = document.querySelector<HTMLInputElement>(".range")!;
 const startEl = document.querySelector<HTMLSpanElement>(".start")!;
